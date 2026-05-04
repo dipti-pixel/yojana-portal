@@ -40,7 +40,7 @@ export default function Home() {
           {DEPARTMENTS.map((dept) => (
             <Link
               key={dept.name}
-              href={`/schemes?vibhag=${encodeURIComponent(dept.name)}`}
+              href={`/schemes?${encodeURIComponent('कार्यदायी विभाग')}=${encodeURIComponent(dept.name)}`}
             >
               <div
                 className={`rounded-xl p-4 text-center font-medium text-sm cursor-pointer hover:opacity-80 transition ${dept.color}`}

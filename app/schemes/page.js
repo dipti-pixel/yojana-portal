@@ -27,7 +27,7 @@ function SchemesContent() {
   const [filtered, setFiltered] = useState([])
   const [loading, setLoading]   = useState(true)
   const [search, setSearch]     = useState('')
-  const [dept, setDept]         = useState(searchParams.get('vibhag') || 'सभी')
+  const [dept, setDept]         = useState(searchParams.get('कार्यदायी विभाग') || 'सभी')
   const [page, setPage]         = useState(1)
 
   // Fetch all schemes once on mount
@@ -36,7 +36,7 @@ function SchemesContent() {
       setLoading(true)
       const { data, error } = await supabase
         .from('schemes')
-        .select('id, naam, vivaran, vibhag')
+        .select('id, "योजना का नाम", "योजना का विवरण", "कार्यदायी विभाग"')
         .order('id')
       if (!error) setSchemes(data || [])
       setLoading(false)
@@ -49,15 +49,15 @@ function SchemesContent() {
     let result = schemes
 
     if (dept !== 'सभी') {
-      result = result.filter((s) => s.vibhag === dept)
+      result = result.filter((s) => s['कार्यदायी विभाग'] === dept)
     }
 
     if (search.trim()) {
       const q = search.trim().toLowerCase()
       result = result.filter(
         (s) =>
-          s.naam?.toLowerCase().includes(q) ||
-          s.vivaran?.toLowerCase().includes(q)
+          s['योजना का नाम']?.toLowerCase().includes(q) ||
+          s['योजना का विवरण']?.toLowerCase().includes(q)
       )
     }
 

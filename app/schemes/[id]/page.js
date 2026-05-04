@@ -7,10 +7,10 @@ import { notFound } from 'next/navigation'
 export async function generateMetadata({ params }) {
   const { data } = await supabase
     .from('schemes')
-    .select('naam')
+    .select('"योजना का नाम"')
     .eq('id', params.id)
     .single()
-  return { title: data?.naam || 'योजना विवरण' }
+  return { title: data?.['योजना का नाम'] || 'योजना विवरण' }
 }
 
 function Section({ title, content, icon }) {
@@ -53,17 +53,17 @@ export default async function SchemeDetail({ params }) {
         {/* Header card */}
         <div className="bg-[#1B3A6B] text-white rounded-xl p-5 mb-4 shadow">
           <span className="text-xs bg-white/20 px-3 py-1 rounded-full">
-            {scheme.vibhag}
+            {scheme['कार्यदायी विभाग']}
           </span>
-          <h1 className="text-xl font-bold mt-3 leading-snug">{scheme.naam}</h1>
+          <h1 className="text-xl font-bold mt-3 leading-snug">{scheme['योजना का नाम']}</h1>
         </div>
 
         {/* Detail sections */}
         <div className="flex flex-col gap-4">
-          <Section title="योजना का विवरण"   content={scheme.vivaran}  icon="📋" />
-          <Section title="पात्रता"            content={scheme.paatrata} icon="✅" />
-          <Section title="आवश्यक दस्तावेज़"  content={scheme.dastavez} icon="📄" />
-          <Section title="मिलने वाले लाभ"   content={scheme.labh}     icon="🎁" />
+          <Section title="योजना का विवरण"   content={scheme['योजना का विवरण']}          icon="📋" />
+          <Section title="पात्रता"            content={scheme['पात्रता का विवरण']}         icon="✅" />
+          <Section title="आवश्यक दस्तावेज़"  content={scheme['आवश्यक दस्तावेज़']}         icon="📄" />
+          <Section title="मिलने वाले लाभ"   content={scheme['मिलने वाले लाभ का विवरण']} icon="🎁" />
         </div>
 
         {/* CTA */}
