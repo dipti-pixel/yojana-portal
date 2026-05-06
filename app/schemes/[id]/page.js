@@ -1,8 +1,7 @@
 import { supabase } from '@/lib/supabase'
-import Navbar from '@/components/Navbar'
-import Footer from '@/components/Footer'
-import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import Link from 'next/link'
+import InterestForm from '@/components/InterestForm'
 
 export async function generateMetadata({ params }) {
   const { data } = await supabase
@@ -16,18 +15,21 @@ export async function generateMetadata({ params }) {
 function Section({ title, content, icon }) {
   if (!content) return null
   return (
-    <div className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
-      <h3 className="font-bold text-[#1B3A6B] mb-2 flex items-center gap-2 text-base">
-        <span className="text-xl">{icon}</span> {title}
-      </h3>
-      <p className="text-gray-700 text-sm leading-relaxed whitespace-pre-wrap">
+    <details className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden group" open>
+      <summary className="flex items-center justify-between px-4 py-3 cursor-pointer select-none list-none">
+        <span className="font-bold text-[#1B3A6B] flex items-center gap-2 text-base">
+          <span>{icon}</span> {title}
+        </span>
+        <span className="text-gray-400 group-open:rotate-180 transition-transform text-sm">▼</span>
+      </summary>
+      <div className="px-4 pb-4 text-gray-700 text-sm leading-relaxed whitespace-pre-wrap border-t border-gray-50 pt-3">
         {content}
-      </p>
-    </div>
+      </div>
+    </details>
   )
 }
 
-export default async function SchemeDetail({ params }) {
+export default async function SchemeDetail({ params, searchParams }) {
   const { data: scheme, error } = await supabase
     .from('schemes')
     .select('*')
@@ -36,53 +38,44 @@ export default async function SchemeDetail({ params }) {
 
   if (error || !scheme) return notFound()
 
+  const backCategory = searchParams?.category || ''
+
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar />
-
-      <div className="max-w-2xl mx-auto px-4 py-6 w-full flex-1">
-
-        {/* Back */}
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-[#1B3A6B] text-white px-4 py-4 flex items-start gap-3 sticky top-0 z-10">
         <Link
-          href="/schemes"
-          className="inline-flex items-center gap-1 text-blue-600 text-sm mb-4 hover:underline"
-        >
-          ← वापस जाएं
-        </Link>
-
-        {/* Header card */}
-        <div className="bg-[#1B3A6B] text-white rounded-xl p-5 mb-4 shadow">
-          <span className="text-xs bg-white/20 px-3 py-1 rounded-full">
-            {scheme['कार्यदायी विभाग']}
-          </span>
-          <h1 className="text-xl font-bold mt-3 leading-snug">{scheme['योजना का नाम']}</h1>
-        </div>
-
-        {/* Detail sections */}
-        <div className="flex flex-col gap-4">
-          <Section title="योजना का विवरण"   content={scheme['योजना का विवरण']}          icon="📋" />
-          <Section title="पात्रता"            content={scheme['पात्रता का विवरण']}         icon="✅" />
-          <Section title="आवश्यक दस्तावेज़"  content={scheme['आवश्यक दस्तावेज़']}         icon="📄" />
-          <Section title="मिलने वाले लाभ"   content={scheme['मिलने वाले लाभ का विवरण']} icon="🎁" />
-        </div>
-
-        {/* CTA */}
-        <div className="mt-6 bg-orange-50 border border-orange-200 rounded-xl p-5 text-center">
-          <p className="text-gray-700 font-semibold mb-3">
-            इस योजना के लिए आवेदन करना है?
-          </p>
-          <p className="text-gray-500 text-sm mb-4">
-            अपने नजदीकी ग्राम पंचायत या जनसेवा केंद्र पर संपर्क करें।
-          </p>
-          <Link href="/">
-            <button className="bg-orange-500 hover:bg-orange-600 transition text-white px-6 py-2 rounded-full font-bold">
-              🏠 होम पर जाएं
-            </button>
-          </Link>
+          href={backCategory ? `/schemes?category=${encodeURIComponent(backCategory)}` : '/'}
+          className="text-white text-xl mt-0.5 flex-shrink-0"
+        >←</Link>
+        <div>
+          <p className="text-xs text-blue-300">{scheme['श्रेणी'] || scheme['कार्यदायी विभाग']}</p>
+          <h1 className="font-bold text-base leading-snug">{scheme['योजना का नाम']}</h1>
         </div>
       </div>
 
-      <Footer />
+      <div className="max-w-lg mx-auto px-4 py-5 space-y-3">
+
+        {/* Dept badge */}
+        <div className="flex items-center gap-2">
+          <span className="bg-blue-100 text-blue-700 text-xs px-3 py-1 rounded-full font-medium">
+            🏢 {scheme['कार्यदायी विभाग']}
+          </span>
+        </div>
+
+        {/* Info sections */}
+        <Section title="योजना का विवरण"         content={scheme['योजना का विवरण']}          icon="📋" />
+        <Section title="पात्रता का विवरण"        content={scheme['पात्रता का विवरण']}         icon="✅" />
+        <Section title="आवश्यक दस्तावेज़"        content={scheme['आवश्यक दस्तावेज़']}         icon="📄" />
+        <Section title="मिलने वाले लाभ का विवरण" content={scheme['मिलने वाले लाभ का विवरण']} icon="🎁" />
+
+        {/* Interest Form */}
+        <div className="pt-2">
+          <InterestForm schemeId={params.id} schemeName={scheme['योजना का नाम']} />
+        </div>
+      </div>
+
+      <div className="h-10" />
     </div>
   )
 }

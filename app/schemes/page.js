@@ -1,155 +1,106 @@
 'use client'
 
 import { useEffect, useState, Suspense } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
-import SchemeCard from '@/components/SchemeCard'
-import Navbar from '@/components/Navbar'
-import Footer from '@/components/Footer'
+import Link from 'next/link'
 
-const DEPARTMENTS = [
-  'सभी',
-  'ग्राम्य विकास',
-  'समाज कल्याण विभाग',
-  'श्रम विभाग',
-  'दिव्यांग विभाग',
-  'पशुपालन विभाग',
-  'मत्सय विभाग',
-  'जिला प्रोबेशन',
-]
+const DEPT_COLOR = {
+  'ग्राम्य विकास':       'bg-green-100 text-green-700',
+  'समाज कल्याण विभाग':  'bg-blue-100 text-blue-700',
+  'श्रम विभाग':          'bg-yellow-100 text-yellow-700',
+  'दिव्यांग विभाग':      'bg-purple-100 text-purple-700',
+  'पशुपालन विभाग':       'bg-orange-100 text-orange-700',
+  'मत्सय विभाग':         'bg-cyan-100 text-cyan-700',
+  'जिला प्रोबेशन':       'bg-red-100 text-red-700',
+  'कृषि विभाग':          'bg-lime-100 text-lime-700',
+}
 
-const PAGE_SIZE = 20
-
-function SchemesContent() {
+function SchemesList() {
   const searchParams = useSearchParams()
+  const router = useRouter()
+  const category = searchParams.get('category') || ''
 
-  const [schemes, setSchemes]   = useState([])
-  const [filtered, setFiltered] = useState([])
-  const [loading, setLoading]   = useState(true)
-  const [search, setSearch]     = useState('')
-  const [dept, setDept]         = useState(searchParams.get('कार्यदायी विभाग') || 'सभी')
-  const [page, setPage]         = useState(1)
+  const [schemes, setSchemes] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError]     = useState(null)
 
-  // Fetch all schemes once on mount
   useEffect(() => {
-    async function fetchAll() {
+    async function fetch() {
       setLoading(true)
+      setError(null)
       const { data, error } = await supabase
         .from('schemes')
-        .select('id, "योजना का नाम", "योजना का विवरण", "कार्यदायी विभाग"')
+        .select('id, "योजना का नाम", "कार्यदायी विभाग", "श्रेणी"')
         .order('id')
-      if (!error) setSchemes(data || [])
+      if (error) {
+        setError('योजनाएं लोड नहीं हो पाईं। कृपया पुनः प्रयास करें।')
+      } else {
+        const filtered = category
+          ? (data || []).filter(s => s['श्रेणी'] === category)
+          : (data || [])
+        setSchemes(filtered)
+      }
       setLoading(false)
     }
-    fetchAll()
-  }, [])
-
-  // Re-filter whenever search or dept changes
-  useEffect(() => {
-    let result = schemes
-
-    if (dept !== 'सभी') {
-      result = result.filter((s) => s['कार्यदायी विभाग'] === dept)
-    }
-
-    if (search.trim()) {
-      const q = search.trim().toLowerCase()
-      result = result.filter(
-        (s) =>
-          s['योजना का नाम']?.toLowerCase().includes(q) ||
-          s['योजना का विवरण']?.toLowerCase().includes(q)
-      )
-    }
-
-    setFiltered(result)
-    setPage(1)
-  }, [search, dept, schemes])
-
-  const totalPages = Math.ceil(filtered.length / PAGE_SIZE)
-  const paginated  = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+    fetch()
+  }, [category])
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar />
-
-      <div className="max-w-2xl mx-auto px-4 py-6 w-full flex-1">
-
-        {/* Search bar */}
-        <input
-          type="text"
-          placeholder="🔍  योजना का नाम खोजें..."
-          className="w-full border border-gray-300 rounded-xl px-4 py-3 text-base mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white shadow-sm"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-
-        {/* Department filter chips */}
-        <div className="flex gap-2 overflow-x-auto pb-2 mb-4 -mx-1 px-1">
-          {DEPARTMENTS.map((d) => (
-            <button
-              key={d}
-              onClick={() => setDept(d)}
-              className={`whitespace-nowrap px-3 py-1.5 rounded-full text-sm font-medium border transition flex-shrink-0
-                ${dept === d
-                  ? 'bg-[#1B3A6B] text-white border-[#1B3A6B]'
-                  : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-100'
-                }`}
-            >
-              {d}
-            </button>
-          ))}
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-[#1B3A6B] text-white px-4 py-4 flex items-center gap-3 sticky top-0 z-10">
+        <button onClick={() => router.back()} className="text-white text-xl">←</button>
+        <div>
+          <p className="text-xs text-blue-300">श्रेणी</p>
+          <h1 className="font-bold text-lg leading-tight">{category || 'सभी योजनाएं'}</h1>
         </div>
-
-        {/* Count */}
-        <p className="text-gray-500 text-sm mb-3">
-          {loading
-            ? 'योजनाएं लोड हो रही हैं...'
-            : `${filtered.length} योजनाएं मिलीं`}
-        </p>
-
-        {/* Cards */}
-        {loading ? (
-          <div className="text-center py-24 text-gray-400 text-xl animate-pulse">
-            लोड हो रहा है...
-          </div>
-        ) : paginated.length === 0 ? (
-          <div className="text-center py-24 text-gray-400">
-            <div className="text-4xl mb-3">🔍</div>
-            <p>कोई योजना नहीं मिली</p>
-          </div>
-        ) : (
-          <div className="grid gap-4">
-            {paginated.map((s) => (
-              <SchemeCard key={s.id} scheme={s} />
-            ))}
-          </div>
-        )}
-
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex justify-center items-center gap-3 mt-8">
-            <button
-              onClick={() => { setPage((p) => Math.max(1, p - 1)); window.scrollTo(0,0) }}
-              disabled={page === 1}
-              className="px-4 py-2 rounded-lg border bg-white disabled:opacity-40 hover:bg-gray-100 transition"
-            >
-              ← पिछला
-            </button>
-            <span className="text-sm text-gray-600 font-medium">
-              {page} / {totalPages}
-            </span>
-            <button
-              onClick={() => { setPage((p) => Math.min(totalPages, p + 1)); window.scrollTo(0,0) }}
-              disabled={page === totalPages}
-              className="px-4 py-2 rounded-lg border bg-white disabled:opacity-40 hover:bg-gray-100 transition"
-            >
-              अगला →
-            </button>
-          </div>
-        )}
       </div>
 
-      <Footer />
+      <div className="max-w-lg mx-auto px-4 py-5">
+        {loading ? (
+          <div className="space-y-3 mt-2">
+            {[1,2,3].map(i => (
+              <div key={i} className="bg-white rounded-2xl p-4 animate-pulse h-24 border border-gray-100"/>
+            ))}
+          </div>
+        ) : error ? (
+          <div className="text-center py-20 text-red-500">
+            <div className="text-4xl mb-3">⚠️</div>
+            <p>{error}</p>
+          </div>
+        ) : schemes.length === 0 ? (
+          <div className="text-center py-20 text-gray-400">
+            <div className="text-5xl mb-3">📋</div>
+            <p className="font-medium">इस श्रेणी में अभी कोई योजना नहीं है</p>
+            <Link href="/" className="mt-4 inline-block text-blue-600 underline text-sm">
+              वापस जाएं
+            </Link>
+          </div>
+        ) : (
+          <>
+            <p className="text-gray-500 text-sm mb-4">{schemes.length} योजनाएं मिलीं</p>
+            <div className="space-y-3">
+              {schemes.map((s) => {
+                const deptColor = DEPT_COLOR[s['कार्यदायी विभाग']] || 'bg-gray-100 text-gray-600'
+                return (
+                  <Link key={s.id} href={`/schemes/${s.id}?category=${encodeURIComponent(category)}`}>
+                    <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm active:scale-98 transition">
+                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${deptColor}`}>
+                        {s['कार्यदायी विभाग']}
+                      </span>
+                      <p className="font-bold text-gray-800 mt-2 text-base leading-snug">
+                        {s['योजना का नाम']}
+                      </p>
+                      <p className="text-orange-500 text-sm mt-2 font-semibold">पूरी जानकारी देखें →</p>
+                    </div>
+                  </Link>
+                )
+              })}
+            </div>
+          </>
+        )}
+      </div>
     </div>
   )
 }
@@ -157,9 +108,11 @@ function SchemesContent() {
 export default function SchemesPage() {
   return (
     <Suspense fallback={
-      <div className="text-center py-24 text-gray-400 text-xl">लोड हो रहा है...</div>
+      <div className="min-h-screen flex items-center justify-center text-gray-400 text-lg">
+        लोड हो रहा है...
+      </div>
     }>
-      <SchemesContent />
+      <SchemesList />
     </Suspense>
   )
 }
