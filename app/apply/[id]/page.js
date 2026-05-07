@@ -4,7 +4,14 @@ import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 
-function Field({ label, field, type = 'text', inputMode, maxLength, placeholder, value, onChange, error }) {
+const BLOCKS = [
+  'जसरा','शंकरगढ़','प्रतापपुर','सैदाबाद','धनुपुर','हण्डिया','चाका',
+  'करछना','कौधियारा','कोरांव','उरूवा','मेजा','माण्डा','बहरिया',
+  'फूलपुर','बहादुरपुर','सहसों','कौड्रिहार','शृंग्वेरपुर धाम',
+  'भगवतपुर','होलागढ़','मऊआइमा','सोरांव',
+]
+
+function Field({ label, type = 'text', inputMode, maxLength, placeholder, value, onChange, error }) {
   return (
     <div>
       <label className="block text-sm font-semibold text-gray-700 mb-1">{label}</label>
@@ -18,6 +25,24 @@ function Field({ label, field, type = 'text', inputMode, maxLength, placeholder,
         className={`w-full border rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white
           ${error ? 'border-red-400 bg-red-50' : 'border-gray-300'}`}
       />
+      {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
+    </div>
+  )
+}
+
+function BlockSelect({ value, onChange, error }) {
+  return (
+    <div>
+      <label className="block text-sm font-semibold text-gray-700 mb-1">ब्लॉक *</label>
+      <select
+        value={value}
+        onChange={onChange}
+        className={`w-full border rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white appearance-none
+          ${error ? 'border-red-400 bg-red-50' : 'border-gray-300'}`}
+      >
+        <option value="">— ब्लॉक चुनें —</option>
+        {BLOCKS.map(b => <option key={b} value={b}>{b}</option>)}
+      </select>
       {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
     </div>
   )
@@ -125,10 +150,7 @@ function ApplyForm({ schemeId, schemeName, category }) {
             label="गाँव *" field="gaon" placeholder="गाँव / कस्बे का नाम"
             value={form.gaon} onChange={set('gaon')} error={errors.gaon}
           />
-          <Field
-            label="ब्लॉक *" field="block" placeholder="ब्लॉक का नाम"
-            value={form.block} onChange={set('block')} error={errors.block}
-          />
+          <BlockSelect value={form.block} onChange={set('block')} error={errors.block} />
           <Field
             label="मोबाइल नंबर *" field="mobile" inputMode="numeric" maxLength={10}
             placeholder="10 अंकों का नंबर"
