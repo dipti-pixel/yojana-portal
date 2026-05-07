@@ -1,7 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import InterestForm from '@/components/InterestForm'
 
 export async function generateMetadata({ params }) {
   const { data } = await supabase
@@ -69,10 +68,13 @@ export default async function SchemeDetail({ params, searchParams }) {
         <Section title="आवश्यक दस्तावेज़"        content={scheme['आवश्यक दस्तावेज़']}         icon="📄" />
         <Section title="मिलने वाले लाभ का विवरण" content={scheme['मिलने वाले लाभ का विवरण']} icon="🎁" />
 
-        {/* Interest Form */}
-        <div className="pt-2">
-          <InterestForm schemeId={params.id} schemeName={scheme['योजना का नाम']} />
-        </div>
+        {/* Apply Button */}
+        <Link
+          href={`/apply/${params.id}?name=${encodeURIComponent(scheme['योजना का नाम'])}&category=${encodeURIComponent(backCategory)}`}
+          className="block w-full bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white text-center py-4 rounded-2xl font-bold text-base transition mt-2"
+        >
+          👉 रुचि दर्ज करें
+        </Link>
       </div>
 
       <div className="h-10" />
