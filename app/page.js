@@ -26,16 +26,9 @@ export default function Home() {
     <div className="min-h-screen bg-gray-100">
 
       {/* Header */}
-      <div className="bg-[#1B3A6B] text-white px-4 pt-8 pb-5 text-center">
-        <svg className="w-12 h-12 mx-auto mb-2 text-blue-200" viewBox="0 0 48 48" fill="none">
-          <rect x="4" y="20" width="40" height="24" rx="2" fill="currentColor" fillOpacity="0.3"/>
-          <path d="M2 22 L24 6 L46 22" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-          <rect x="18" y="30" width="12" height="14" rx="1" fill="currentColor" fillOpacity="0.6"/>
-          <rect x="8" y="26" width="8" height="8" rx="1" fill="currentColor" fillOpacity="0.5"/>
-          <rect x="32" y="26" width="8" height="8" rx="1" fill="currentColor" fillOpacity="0.5"/>
-        </svg>
-        <h1 className="text-3xl font-extrabold leading-snug tracking-wide">योजना मित्र</h1>
-        <p className="text-blue-200 text-base mt-1 font-semibold">प्रयागराज जिला — सरकारी योजनाएं</p>
+      <div className="bg-[#1B3A6B] text-white px-4 pt-5 pb-4 text-center">
+        <h1 className="text-2xl font-extrabold tracking-wide">योजना मित्र</h1>
+        <p className="text-blue-200 text-sm mt-0.5 font-semibold">प्रयागराज जिला — सरकारी योजनाएं</p>
       </div>
       {/* Tricolor stripe */}
       <div className="flex h-2">
@@ -45,16 +38,13 @@ export default function Home() {
       </div>
 
       {/* Intro card */}
-      <div className="bg-white mx-4 mt-4 rounded-2xl p-4 shadow-sm border border-gray-200">
-        <h2 className="text-[#1B3A6B] font-extrabold text-base mb-2">जनपद जन-सेवा पोर्टल — परिचय</h2>
-        <p className="text-gray-700 text-sm leading-relaxed mb-3">
-          यह पोर्टल जनपद प्रशासन द्वारा नागरिकों तक सरकारी योजनाओं की जानकारी सुलभ रूप से पहुँचाने हेतु विकसित किया गया है। पात्र होने पर रुचि दर्ज करें — संबंधित विभाग आपसे संपर्क कर पात्रता का परीक्षण करेगा।
+      <div className="bg-white mx-4 mt-3 rounded-2xl px-4 py-3 shadow-sm border border-gray-200">
+        <p className="text-gray-700 text-sm leading-relaxed">
+          <span className="font-extrabold text-[#1B3A6B]">जनपद जन-सेवा पोर्टल — </span>
+          सरकारी योजनाओं की जानकारी एक स्थान पर। पात्र हों तो रुचि दर्ज करें — विभाग स्वयं संपर्क करेगा।
         </p>
-        <div className="bg-amber-50 border border-amber-300 rounded-xl p-3">
-          <p className="text-amber-800 text-xs font-extrabold mb-1">⚠️ महत्त्वपूर्ण सूचना</p>
-          <p className="text-amber-700 text-xs leading-relaxed font-semibold">
-            रुचि दर्ज करना मात्र एक अभिव्यक्ति है — यह गारंटी या स्वीकृति नहीं है। लाभ तभी मिलेगा जब विभाग द्वारा पात्रता व दस्तावेज़ों का विधिवत सत्यापन हो जाए।
-          </p>
+        <div className="bg-amber-50 border border-amber-300 rounded-xl px-3 py-2 mt-2">
+          <p className="text-amber-700 text-xs font-bold">⚠️ रुचि दर्ज करना गारंटी नहीं — पात्रता व दस्तावेज़ सत्यापन के बाद ही लाभ मिलेगा।</p>
         </div>
       </div>
 
