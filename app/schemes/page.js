@@ -47,14 +47,19 @@ function SchemesList() {
   }, [category])
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-100">
       {/* Header */}
       <div className="bg-[#1B3A6B] text-white px-4 py-4 flex items-center gap-3 sticky top-0 z-10">
-        <button onClick={() => router.back()} className="text-white text-xl">←</button>
-        <div>
-          <p className="text-xs text-blue-300">श्रेणी</p>
-          <h1 className="font-bold text-lg leading-tight">{category || 'सभी योजनाएं'}</h1>
+        <button onClick={() => router.back()} className="text-white text-2xl font-bold">←</button>
+        <div className="flex-1">
+          <p className="text-xs text-blue-300 font-semibold">श्रेणी</p>
+          <h1 className="font-extrabold text-lg leading-tight">{category || 'सभी योजनाएं'}</h1>
         </div>
+        <Link href="/" className="text-blue-200">
+          <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+          </svg>
+        </Link>
       </div>
 
       <div className="max-w-lg mx-auto px-4 py-5">
@@ -85,14 +90,14 @@ function SchemesList() {
                 const deptColor = DEPT_COLOR[s['कार्यदायी विभाग']] || 'bg-gray-100 text-gray-600'
                 return (
                   <Link key={s.id} href={`/schemes/${s.id}?category=${encodeURIComponent(category)}`}>
-                    <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm active:scale-98 transition">
-                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${deptColor}`}>
+                    <div className="bg-white rounded-2xl p-4 border-2 border-gray-200 shadow-sm active:scale-98 transition">
+                      <span className={`text-xs px-2 py-1 rounded-full font-bold ${deptColor}`}>
                         {s['कार्यदायी विभाग']}
                       </span>
-                      <p className="font-bold text-gray-800 mt-2 text-base leading-snug">
+                      <p className="font-extrabold text-gray-800 mt-2 text-base leading-snug">
                         {s['योजना का नाम']}
                       </p>
-                      <p className="text-orange-500 text-sm mt-2 font-semibold">पूरी जानकारी देखें →</p>
+                      <p className="text-orange-500 text-sm mt-2 font-bold">पूरी जानकारी देखें →</p>
                     </div>
                   </Link>
                 )

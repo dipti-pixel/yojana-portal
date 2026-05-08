@@ -149,6 +149,19 @@ export function IconMachhware({ className }) {
   )
 }
 
+export function IconAwaashin({ className }) {
+  return (
+    <svg className={className} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M4 22 L24 6 L44 22" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M8 20 L8 42 L20 42 L20 30 L28 30 L28 42 L40 42 L40 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="currentColor" fillOpacity="0.15"/>
+      <rect x="18" y="30" width="12" height="12" rx="1" fill="currentColor" fillOpacity="0.4"/>
+      <rect x="10" y="26" width="8" height="8" rx="1" fill="currentColor" fillOpacity="0.5"/>
+      <rect x="30" y="26" width="8" height="8" rx="1" fill="currentColor" fillOpacity="0.5"/>
+      <path d="M36 8 L36 14 L42 20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  )
+}
+
 export function IconKaarigar({ className }) {
   return (
     <svg className={className} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">

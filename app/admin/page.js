@@ -1,12 +1,19 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { supabase } from '@/lib/supabase'
+import * as XLSX from 'xlsx'
 
 const CATEGORIES = [
   'किसान','प्रवासी / श्रमिक','वृद्धजन','महिलाएं',
   'विधवा / निराश्रित महिलाएं','अनाथ बच्चे','दिव्यांगजन',
-  'बेरोजगार युवा','पशुपालक','विद्यार्थी','मछुआरे / केवट','पारंपरिक कारीगर',
+  'बेरोजगार युवा','पशुपालक','विद्यार्थी','मछुआरे / केवट',
+  'पारंपरिक कारीगर','आवासहीन परिवार',
+]
+
+const REQUIRED_HEADERS = [
+  'श्रेणी','योजना का नाम','योजना का विवरण',
+  'पात्रता का विवरण','आवश्यक दस्तावेज़','मिलने वाले लाभ का विवरण','कार्यदायी विभाग',
 ]
 
 const EMPTY = {
@@ -65,8 +72,60 @@ function Dashboard() {
   const [form, setForm]           = useState(EMPTY)
   const [saving, setSaving]       = useState(false)
   const [toast, setToast]         = useState('')
+  const [xlModal, setXlModal]     = useState(false)
+  const [xlRows, setXlRows]       = useState([])
+  const [xlError, setXlError]     = useState('')
+  const [xlUploading, setXlUploading] = useState(false)
+  const fileRef = useRef()
 
   function showToast(msg) { setToast(msg); setTimeout(() => setToast(''), 3000) }
+
+  function downloadTemplate() {
+    const ws = XLSX.utils.aoa_to_sheet([REQUIRED_HEADERS])
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws, 'योजनाएं')
+    XLSX.writeFile(wb, 'yojana_template.xlsx')
+  }
+
+  function handleExcelUpload(e) {
+    setXlError('')
+    setXlRows([])
+    const file = e.target.files[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = evt => {
+      const wb = XLSX.read(evt.target.result, { type: 'array' })
+      const ws = wb.Sheets[wb.SheetNames[0]]
+      const data = XLSX.utils.sheet_to_json(ws, { defval: '' })
+      if (!data.length) { setXlError('Excel में कोई डेटा नहीं मिला।'); return }
+      const headers = Object.keys(data[0]).map(h => h.trim())
+      const missing = REQUIRED_HEADERS.filter(h => !headers.includes(h))
+      if (missing.length) { setXlError(`ये कॉलम नहीं मिले: ${missing.join(', ')}`); return }
+      const rows = data.map(r => ({
+        'श्रेणी': String(r['श्रेणी'] || '').trim(),
+        'योजना का नाम': String(r['योजना का नाम'] || '').trim(),
+        'योजना का विवरण': String(r['योजना का विवरण'] || '').trim(),
+        'पात्रता का विवरण': String(r['पात्रता का विवरण'] || '').trim(),
+        'आवश्यक दस्तावेज़': String(r['आवश्यक दस्तावेज़'] || '').trim(),
+        'मिलने वाले लाभ का विवरण': String(r['मिलने वाले लाभ का विवरण'] || '').trim(),
+        'कार्यदायी विभाग': String(r['कार्यदायी विभाग'] || '').trim(),
+      })).filter(r => r['योजना का नाम'])
+      if (!rows.length) { setXlError('Excel में कोई मान्य योजना नहीं मिली।'); return }
+      setXlRows(rows)
+    }
+    reader.readAsArrayBuffer(file)
+  }
+
+  async function importExcelRows() {
+    setXlUploading(true)
+    const { error } = await supabase.from('schemes').insert(xlRows)
+    setXlUploading(false)
+    if (error) { setXlError('अपलोड में गड़बड़ हुई: ' + error.message); return }
+    setXlModal(false); setXlRows([]); setXlError('')
+    if (fileRef.current) fileRef.current.value = ''
+    showToast(`✅ ${xlRows.length} योजनाएं जोड़ी गईं`)
+    loadAll()
+  }
 
   async function loadAll() {
     const [{ data: s }, { data: a }] = await Promise.all([
@@ -161,8 +220,12 @@ function Dashboard() {
               className="flex-1 border border-gray-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 bg-white"
             />
             <button onClick={() => { setForm(EMPTY); setModal('add') }}
-              className="bg-orange-500 text-white px-4 py-2.5 rounded-xl font-bold text-sm">
+              className="bg-orange-500 text-white px-3 py-2.5 rounded-xl font-bold text-sm">
               + जोड़ें
+            </button>
+            <button onClick={() => { setXlModal(true); setXlRows([]); setXlError('') }}
+              className="bg-green-600 text-white px-3 py-2.5 rounded-xl font-bold text-sm">
+              📤 Excel
             </button>
           </div>
 
@@ -269,6 +332,57 @@ function Dashboard() {
                 className="w-full bg-[#1B3A6B] text-white py-3 rounded-xl font-bold disabled:opacity-50">
                 {saving ? 'सहेजा जा रहा है...' : '✅ सहेजें'}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Excel Upload Modal */}
+      {xlModal && (
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-end sm:items-center justify-center">
+          <div className="bg-white w-full sm:max-w-lg rounded-t-3xl sm:rounded-2xl max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white px-5 pt-5 pb-3 border-b flex items-center justify-between">
+              <h2 className="font-bold text-lg text-[#1B3A6B]">📤 Excel से योजनाएं जोड़ें</h2>
+              <button onClick={() => { setXlModal(false); setXlRows([]); setXlError('') }} className="text-gray-400 text-3xl leading-none">×</button>
+            </div>
+            <div className="px-5 py-4 space-y-4">
+              <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 text-sm text-blue-700">
+                <p className="font-bold mb-1">📋 Steps:</p>
+                <p>1. पहले blank template डाउनलोड करें</p>
+                <p>2. उसमें योजनाओं की जानकारी भरें</p>
+                <p>3. भरी हुई file यहाँ upload करें</p>
+              </div>
+
+              <button onClick={downloadTemplate}
+                className="w-full bg-[#1B3A6B] text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2">
+                📥 Blank Template डाउनलोड करें
+              </button>
+
+              <div className="border-2 border-dashed border-gray-300 rounded-xl p-4 text-center">
+                <p className="text-gray-500 text-sm mb-2">भरी हुई Excel file चुनें</p>
+                <input ref={fileRef} type="file" accept=".xlsx,.xls" onChange={handleExcelUpload}
+                  className="text-sm text-gray-600" />
+              </div>
+
+              {xlError && <p className="text-red-500 text-sm font-semibold bg-red-50 p-3 rounded-xl">{xlError}</p>}
+
+              {xlRows.length > 0 && (
+                <div className="bg-green-50 border border-green-200 rounded-xl p-3">
+                  <p className="text-green-700 font-bold text-sm mb-2">✅ {xlRows.length} योजनाएं मिलीं — Preview:</p>
+                  <div className="space-y-1 max-h-40 overflow-y-auto">
+                    {xlRows.map((r, i) => (
+                      <div key={i} className="text-xs text-gray-600 bg-white rounded p-2 border">
+                        <span className="bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-full mr-1">{r['श्रेणी']}</span>
+                        {r['योजना का नाम']}
+                      </div>
+                    ))}
+                  </div>
+                  <button onClick={importExcelRows} disabled={xlUploading}
+                    className="w-full mt-3 bg-green-600 text-white py-3 rounded-xl font-bold disabled:opacity-50">
+                    {xlUploading ? 'जोड़ा जा रहा है...' : `✅ ${xlRows.length} योजनाएं जोड़ें`}
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>

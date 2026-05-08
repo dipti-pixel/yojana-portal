@@ -14,17 +14,25 @@ export async function generateMetadata({ params }) {
 function Section({ title, content, icon }) {
   if (!content) return null
   return (
-    <details className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden group" open>
-      <summary className="flex items-center justify-between px-4 py-3 cursor-pointer select-none list-none">
-        <span className="font-bold text-[#1B3A6B] flex items-center gap-2 text-base">
+    <details className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden group" open>
+      <summary className="flex items-center justify-between px-4 py-3.5 cursor-pointer select-none list-none">
+        <span className="font-extrabold text-[#1B3A6B] flex items-center gap-2 text-base">
           <span>{icon}</span> {title}
         </span>
         <span className="text-gray-400 group-open:rotate-180 transition-transform text-sm">▼</span>
       </summary>
-      <div className="px-4 pb-4 text-gray-700 text-sm leading-relaxed whitespace-pre-wrap border-t border-gray-50 pt-3">
+      <div className="px-4 pb-4 text-gray-700 text-sm leading-relaxed whitespace-pre-wrap border-t border-gray-100 pt-3">
         {content}
       </div>
     </details>
+  )
+}
+
+function HomeIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+      <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+    </svg>
   )
 }
 
@@ -40,44 +48,42 @@ export default async function SchemeDetail({ params, searchParams }) {
   const backCategory = searchParams?.category || ''
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-100 pb-24">
       {/* Header */}
       <div className="bg-[#1B3A6B] text-white px-4 py-4 flex items-start gap-3 sticky top-0 z-10">
         <Link
           href={backCategory ? `/schemes?category=${encodeURIComponent(backCategory)}` : '/'}
-          className="text-white text-xl mt-0.5 flex-shrink-0"
+          className="text-white text-2xl mt-0.5 flex-shrink-0 font-bold"
         >←</Link>
-        <div>
-          <p className="text-xs text-blue-300">{scheme['श्रेणी'] || scheme['कार्यदायी विभाग']}</p>
-          <h1 className="font-bold text-base leading-snug">{scheme['योजना का नाम']}</h1>
+        <div className="flex-1 min-w-0">
+          <p className="text-xs text-blue-300 font-semibold">{scheme['श्रेणी'] || scheme['कार्यदायी विभाग']}</p>
+          <h1 className="font-extrabold text-base leading-snug">{scheme['योजना का नाम']}</h1>
         </div>
+        <Link href="/" className="text-blue-200 flex-shrink-0 mt-0.5"><HomeIcon /></Link>
       </div>
 
       <div className="max-w-lg mx-auto px-4 py-5 space-y-3">
-
-        {/* Dept badge */}
         <div className="flex items-center gap-2">
-          <span className="bg-blue-100 text-blue-700 text-xs px-3 py-1 rounded-full font-medium">
+          <span className="bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full font-bold">
             🏢 {scheme['कार्यदायी विभाग']}
           </span>
         </div>
 
-        {/* Info sections */}
         <Section title="योजना का विवरण"         content={scheme['योजना का विवरण']}          icon="📋" />
         <Section title="पात्रता का विवरण"        content={scheme['पात्रता का विवरण']}         icon="✅" />
         <Section title="आवश्यक दस्तावेज़"        content={scheme['आवश्यक दस्तावेज़']}         icon="📄" />
         <Section title="मिलने वाले लाभ का विवरण" content={scheme['मिलने वाले लाभ का विवरण']} icon="🎁" />
+      </div>
 
-        {/* Apply Button */}
+      {/* Sticky Apply Button */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-gray-200 px-4 py-3 z-20">
         <Link
           href={`/apply/${params.id}?name=${encodeURIComponent(scheme['योजना का नाम'])}&category=${encodeURIComponent(backCategory)}`}
-          className="block w-full bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white text-center py-4 rounded-2xl font-bold text-base transition mt-2"
+          className="block w-full bg-orange-500 active:bg-orange-600 text-white text-center py-4 rounded-2xl font-extrabold text-lg"
         >
           👉 रुचि दर्ज करें
         </Link>
       </div>
-
-      <div className="h-10" />
     </div>
   )
 }
