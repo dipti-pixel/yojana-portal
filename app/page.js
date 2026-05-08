@@ -36,26 +36,12 @@ export default function Home() {
         </svg>
         <h1 className="text-3xl font-extrabold leading-snug tracking-wide">योजना मित्र</h1>
         <p className="text-blue-200 text-base mt-1 font-semibold">प्रयागराज जिला — सरकारी योजनाएं</p>
-        <div className="mt-3 inline-flex items-center gap-1.5 bg-orange-500 text-white text-sm px-4 py-1.5 rounded-full font-bold">
-          📍 QR आधारित प्रवेश
-        </div>
-      </div>
-
-      {/* Introduction */}
-      <div className="bg-white mx-4 mt-4 rounded-2xl p-4 shadow-sm border border-blue-100">
-        <h2 className="text-[#1B3A6B] font-extrabold text-base mb-2">जनपद जन-सेवा पोर्टल — परिचय</h2>
-        <p className="text-gray-700 text-sm leading-relaxed mb-3">
-          यह पोर्टल जनपद प्रशासन द्वारा नागरिकों तक सरकारी योजनाओं की जानकारी सुलभ रूप से पहुँचाने हेतु विकसित किया गया है। इस पोर्टल के माध्यम से आप विभिन्न सरकारी योजनाओं का विवरण, अर्हताएँ एवं आवश्यक दस्तावेज़ों की जानकारी एक स्थान पर प्राप्त कर सकते हैं।
+        <p className="text-blue-100 text-sm mt-3 leading-relaxed px-2 opacity-90">
+          सरकारी योजनाओं की जानकारी एक स्थान पर प्राप्त करें।
         </p>
-        <p className="text-gray-700 text-sm leading-relaxed mb-3">
-          यदि आप किसी योजना के अंतर्गत स्वयं को पात्र समझते हैं, तो आप उस योजना में अपनी रुचि दर्ज कर सकते हैं। रुचि दर्ज होने के पश्चात् संबंधित विभाग आपसे संपर्क कर आपकी पात्रता का परीक्षण करेगा।
+        <p className="text-blue-100 text-sm leading-relaxed px-2 opacity-90">
+          पात्र हों तो रुचि दर्ज करें — विभाग स्वयं संपर्क करेगा।
         </p>
-        <div className="bg-amber-50 border border-amber-200 rounded-xl p-3">
-          <p className="text-amber-800 text-xs font-bold mb-1">⚠️ महत्त्वपूर्ण सूचना</p>
-          <p className="text-amber-700 text-xs leading-relaxed">
-            रुचि दर्ज करना मात्र एक अभिव्यक्ति है — यह किसी भी प्रकार की गारंटी या स्वीकृति नहीं है। योजना का लाभ केवल तभी प्रदान किया जाएगा जब संबंधित विभाग द्वारा आपकी पात्रता एवं दस्तावेज़ों का विधिवत सत्यापन पूर्ण हो जाए।
-          </p>
-        </div>
       </div>
 
       {/* Category Grid */}
