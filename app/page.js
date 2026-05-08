@@ -7,18 +7,18 @@ import {
 
 const CATEGORIES = [
   { name: 'किसान',                      Icon: IconKisan,      bg: 'bg-green-100',  text: 'text-green-700' },
-  { name: 'प्रवासी / श्रमिक',           Icon: IconShramik,    bg: 'bg-yellow-100', text: 'text-yellow-700' },
-  { name: 'वृद्धजन',                    Icon: IconVriddhajan, bg: 'bg-blue-100',   text: 'text-blue-700' },
   { name: 'महिलाएं',                    Icon: IconMahilaye,   bg: 'bg-pink-100',   text: 'text-pink-700' },
+  { name: 'बेरोजगार युवा',             Icon: IconYuva,       bg: 'bg-cyan-100',   text: 'text-cyan-700' },
+  { name: 'वृद्धजन',                    Icon: IconVriddhajan, bg: 'bg-blue-100',   text: 'text-blue-700' },
   { name: 'विधवा / निराश्रित महिलाएं',  Icon: IconVidhwa,     bg: 'bg-purple-100', text: 'text-purple-700' },
   { name: 'अनाथ बच्चे',                Icon: IconAnath,      bg: 'bg-rose-100',   text: 'text-rose-700' },
-  { name: 'दिव्यांगजन',                Icon: IconDivyang,    bg: 'bg-indigo-100', text: 'text-indigo-700' },
-  { name: 'बेरोजगार युवा',             Icon: IconYuva,       bg: 'bg-cyan-100',   text: 'text-cyan-700' },
   { name: 'पशुपालक',                   Icon: IconPashupalan, bg: 'bg-orange-100', text: 'text-orange-700' },
-  { name: 'विद्यार्थी',                Icon: IconVidyarthi,  bg: 'bg-teal-100',   text: 'text-teal-700' },
   { name: 'मछुआरे / केवट',             Icon: IconMachhware,  bg: 'bg-sky-100',    text: 'text-sky-700' },
-  { name: 'पारंपरिक कारीगर',           Icon: IconKaarigar,   bg: 'bg-amber-100',  text: 'text-amber-700' },
   { name: 'आवासहीन परिवार',            Icon: IconAwaashin,   bg: 'bg-lime-100',   text: 'text-lime-700' },
+  { name: 'प्रवासी / श्रमिक',           Icon: IconShramik,    bg: 'bg-yellow-100', text: 'text-yellow-700' },
+  { name: 'दिव्यांगजन',                Icon: IconDivyang,    bg: 'bg-indigo-100', text: 'text-indigo-700' },
+  { name: 'विद्यार्थी',                Icon: IconVidyarthi,  bg: 'bg-teal-100',   text: 'text-teal-700' },
+  { name: 'पारंपरिक कारीगर',           Icon: IconKaarigar,   bg: 'bg-amber-100',  text: 'text-amber-700' },
 ]
 
 export default function Home() {
@@ -41,7 +41,7 @@ export default function Home() {
       <div className="bg-white mx-4 mt-3 rounded-2xl px-4 py-3 shadow-sm border border-gray-200">
         <p className="text-gray-700 text-sm leading-relaxed">
           <span className="font-extrabold text-[#1B3A6B]">जनपद जन-सेवा पोर्टल — </span>
-          सरकारी योजनाओं की जानकारी एक स्थान पर। पात्र हों तो रुचि दर्ज करें — विभाग स्वयं संपर्क करेगा।
+          यह पोर्टल नागरिकों तक सरकारी योजनाओं की जानकारी पहुँचाने हेतु बनाया गया है। अपनी श्रेणी चुनें, योजना जानें — और पात्र हों तो रुचि दर्ज करें, ताकि संबंधित विभाग आपसे संपर्क कर लाभ दिला सके।
         </p>
         <div className="bg-amber-50 border border-amber-300 rounded-xl px-3 py-2 mt-2">
           <p className="text-amber-700 text-xs font-bold">⚠️ रुचि दर्ज करना गारंटी नहीं — पात्रता व दस्तावेज़ सत्यापन के बाद ही लाभ मिलेगा।</p>
